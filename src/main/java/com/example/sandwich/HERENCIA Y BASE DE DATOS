@@ -1,0 +1,78 @@
+Bueno, el proyecto al tener clase Padre, en este caso ABSTRACTA
+// la clase abstracta sera mi plantilla - PRODUCTO - para poder crear otras clases a partir de estas
+// tendra atributos, y tendra el esqueleto de METODOS , pero las definiciones o los overrides estaran
+// en las CLASES CONCRETAS
+// ademas nos permite polimorfismo
+
+-> mi clase PADRE - PRODUCTO - => tendra hijos como PRODUCTOMIGA - PRODUCTOPORKG - PRODUCTOCANTIDAD
+-> pero es esto si lo vez desde el pnto de vista POO , que sucede a la hora de las relaciones y la bbdd?
+
+=> JPA (java persistence api) y spring boot propone soluciones mediante anotaciones
+-> una forma es agregar @Entity y ademas Inheritance que sirve para definir estartegia de creacion y relacion de las tablas
+
+* con Entity -> le digo que la clase tendra una entidad
+* con Inheritance -> defino estrategias
+*** single_table
+	En esta estrategia, todas las subclases se almacenan en una única tabla con una
+	columna adicional (tipo_producto) que indica el tipo de cada registro.
+	@Entity
+    @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+    @DiscriminatorColumn(name = "tipo_producto")
+    public abstract class Producto { ... }
+    Beneficios
+    Eficiencia en consultas: Todas las subclases están en una única tabla,
+     lo que permite realizar consultas en la jerarquía de clases con una sola consulta SQL.
+    Fácil de implementar: No necesita joins ni múltiples tablas para almacenar los datos.
+    Desventajas
+    Espacio desperdiciado: Columnas no usadas para ciertos tipos (por ejemplo, peso en Sandwich)
+     pueden quedar en NULL, ocupando espacio innecesario.
+    Problemas de escalabilidad: Si la tabla crece demasiado (muchos tipos y registros),
+     puede ser menos eficiente para manejar operaciones específicas.
+
+*** joined
+En esta estrategia, se crea una tabla para la clase base Producto y una tabla adicional
+para cada subclase, cada una vinculada con una clave foránea.
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Producto { ... }
+Beneficios
+Espacio optimizado: Solo las subclases que necesiten columnas adicionales las
+	endrán en sus respectivas tablas, reduciendo columnas NULL.
+Consultas polimórficas eficientes: Las consultas polimórficas en la clase base solo
+	necesitan acceder a la tabla principal y hacer joins según el tipo, sin datos duplicados.
+Desventajas
+Complejidad en consultas: Las consultas para un tipo específico requieren joins entre las tablas,
+	lo que puede ralentizar el rendimiento en consultas específicas.
+Estructura de tabla compleja: Requiere mayor gestión de relaciones y puede ser más
+	complicado de mantener en comparación con SINGLE_TABLE.
+
+
+*** TABLE_PER_CLASS (cada subclase con su propia tabla , menos su clase padre , contra: dificil para consultas)
+En esta estrategia, cada subclase tiene su propia tabla, y cada tabla incluye
+todas las columnas necesarias, incluida la clave primaria de la clase base.
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Producto { ... }
+Beneficios
+Estructura flexible: Cada tipo de producto tiene su propia tabla y sus propias columnas, sin columnas NULL innecesarias.
+Buen rendimiento en consultas específicas: Las consultas dirigidas a un tipo específico de producto solo
+	necesitan acceder a su tabla correspondiente.
+Desventajas
+Consultas polimórficas complicadas: Consultar la jerarquía completa requiere hacer UNION entre
+	todas las tablas, lo cual puede ser ineficiente.
+Redundancia en columnas comunes: Como cada tabla tiene las columnas nombre y precio, estos
+	campos se repiten en todas las tablas, lo que puede resultar en redundancia de datos.
+
+
+=> pero no seria algo raro o distinto agregar un @mappedSuperClass?
+-> si, en este caso si uno decide que la CLASE PRODUCTO- tenga una etiqueta mappedSuperClass
+-> si bien usar esta anotacion aclara que la clase sera clase PADRE
+-> no tendria sentido agregar la anotacion @Entity e @Inheritance ya que la anotacion @mappedsuperclass
+-> solo declara cual va a ser la clase padre y sus atributos y metodos lo heredan sus hijos
+-> y chocaria mucho con las anotaciones Entity e Inheritance ya que
+---> si bien ambos tiene distintos propositos, entity sirve para cuando quiero que la clase tenga entidad
+---> como por ejemplo la clase PRODUCTO, y sus subclases POKG, CANTIDAD, SANDWICH, ahi tiene sentido
+--> me facilitaria ademas para la busqueda en la tabla
+--> y si agrego ademas un @mappedSuperClass -> estaria dicendo que la claseproducto solo es clase padre y sus
+--> atributos y metodos lo heredan sus hijos
+--> esto no me sirve si yo quiero que tenga entidad la clase padre!

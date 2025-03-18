@@ -1,0 +1,151 @@
+/* Aplicación de estilo base */
+body {
+    background-color: #f0f0f0; /* Fondo suave */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilos para el header */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logo-sanwich img {
+    width: 80px;
+    height: auto;
+}
+
+.user, .carrito-item, .logout {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.user p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.carrito-item, .logout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.carrito-item label, .logout label {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #666;
+}
+
+.carrito-item img, .logout img {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.barra-clima {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Asegura que la barra de clima esté centrada */
+    padding: 10px; /* Agrega padding para espaciar el contenido */
+
+    border-radius: 5px; /* Bordes redondeados */
+
+    margin: 0 10px; /* Espacio a los lados para centrar */
+    flex: 1; /* Permite que el contenedor crezca para ocupar el espacio disponible */
+}
+
+.barra-clima .data-city {
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en columna */
+    align-items: center; /* Centra los elementos horizontalmente */
+    gap: 5px; /* Espacio entre los elementos */
+}
+
+.barra-clima .data-city p {
+    margin: 0;
+    font-size: 14px; /* Tamaño de fuente */
+    color: #333; /* Color de texto */
+}
+
+.barra-clima .data-city span {
+    font-weight: bold; /* Texto en negrita */
+}
+
+/* Main centrándose en la disposición de contenido */
+main {
+    padding: 20px;
+}
+
+.armar-pedido, .ver-pedido {
+    margin-bottom: 20px;
+}
+
+.button-pedido, .button-ver-pedido {
+    display: block;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.button-pedido:hover, .button-ver-pedido:hover {
+    background-color: #0056b3;
+}
+
+/* Barra de productos con imágenes alineadas horizontalmente */
+.barra-productos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px; /* Espacio entre las imágenes */
+    margin-top: 20px;
+}
+
+.barra-productos img {
+    width: 100px;
+    height: auto;
+}
+
+/* Footer */
+/* Footer */
+footer {
+    background-color: #fff;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-footer {
+    padding: 10px;
+    text-align: left;
+}
+
+.info-footer p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+
+.info-footer label {
+    display: block; /* Asegura que el label ocupe toda la línea */
+    margin-top: 5px; /* Espacio entre el párrafo y el label */
+    font-size: 12px;
+    color: #666;
+    white-space: pre-line; /* Preserva los saltos de línea */
+    line-height: 1.5; /* Aumenta el espacio entre líneas para mejor legibilidad */
+}

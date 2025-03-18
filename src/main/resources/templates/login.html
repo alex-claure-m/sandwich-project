@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <title>Login</title>
+</head>
+<body>
+    <main class="login-container">
+        <div>
+            <img src="https://img.freepik.com/vector-premium/vector-diseno-logotipo-sandwich-simple_1594-256.jpg" alt="Logo Empresa">
+            <form th:action="@{/login}" method="post">
+                <label>Usuario</label>
+                <input type="text" id="username" name="username" required>
+
+                <label>Contraseña</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Iniciar Sesion</button>
+                <p th:if="${error}" th:text="${error}"></p>
+                <p>Si no te encuentras registrado, por favor, <a href="/registergmailusing"> pulse aqui!</a></p>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

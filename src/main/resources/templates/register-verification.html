@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/register-verification.css}">
+    <script th:src="@{/js/register-verification.js}"></script>
+    <title>Verificacion de Codigo</title>
+</head>
+<body>
+    <div class="verification-container" >
+        <form method="post" id="verificationForm" action="/validation-check">
+            <div class="image-container">
+                <img src="https://img.freepik.com/vector-premium/vector-diseno-logotipo-sandwich-simple_1594-256.jpg" alt="Logo Empresa">
+            </div>
+            <label>Código de verificación</label>
+            <p>Por favor, revise su correo e ingrese el codigo proporcionado</p>
+            <input type="text" id="email-resend" name="email-resend" placeholder="Ingrese su Correo" >
+            <input type="text" id="verificationCode" placeholder="Ingrese el Codigo enviado en su casillero" required>
+            <button type="submit" id="confirmButton">Confirmar</button>
+            <div class="timer" id="timer">Reenviar código en 2:00 minutos</div>
+            <button type="button" class="resend-code" id="resendButton">Reenviar código</button>
+        </form>
+    </div>
+</body>
+</html>

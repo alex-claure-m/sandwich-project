@@ -1,0 +1,263 @@
+bueno, aca va a explicarse un poco de como es que springboot ayuda o mejor dicho
+simplifica codigo a la hora de querer usar inyecciones de dependencias.
+
+que son las dependencias: son las relaciones netre 2 objetos donde UN OBJETO requiere el servicio de OTRO OBJETO
+asi por ejemplo croto -> si requiero acceder a una BASE DE DATOS
+	existe una dependencia en una CLASE que se encarga de la conexion a la BASE DE DATOS
+
+y justamente una inyeccion de dependencia es un patron de diseño que se encarga de SUMINISTRAR a un OBJETO - CLIENTE -
+las dependencias necesarias para funcionar , en vez de que el CLIENTE lo cree por si mismo
+
+por ejemplo el siguiente codigo:
+// INTERFAZ de la dependencia
+interface Mensajero {
+    void enviarMensaje(String mensaje);
+}
+
+// IMPLEMENTACION concreta de la dependencia
+class ServicioEmail implements Mensajero {
+    @Override
+    public void enviarMensaje(String mensaje) {
+        System.out.println("Mensaje enviado por correo electrónico: " + mensaje);
+    }
+}
+
+// Fábrica para crear objetos Mensajero
+class FabricaMensajeros {
+    public Mensajero crearMensajero() {
+        return new ServicioEmail();
+    }
+}
+
+// CLIENTE QUE UTILIZA LA INTERFAZ
+class Cliente {
+    private final Mensajero mensajero;
+
+    public Cliente(Mensajero mensajero) {
+        this.mensajero = mensajero;
+    }
+
+    public void enviarMensaje(String mensaje) {
+        mensajero.enviarMensaje(mensaje);
+    }
+
+    public static void main(String[] args) {
+        FabricaMensajeros fabrica = new FabricaMensajeros();
+        Mensajero mensajero = fabrica.crearMensajero();
+        Cliente cliente = new Cliente(mensajero);
+        cliente.enviarMensaje("Hola desde el cliente");
+    }
+}
+--> COMO SE VE este es un modo de inyeccion de dependencias , donde primero creo una interfaz de un metodo
+	luego una implementacion para declarar ese metodo
+-> y una clase FabricaMensajeros, que crea las INSTANCIAS , ya que tiene que existir el OBJETO para poder inyectar como dependencias a un CLIENTE
+-> y por ultimo la clase CLIENTE donde usa la INSTANCIA creada, proporcionada, ahi se ve como esta
+	la creacion de FabricaMensajeros como New FabricaMensajeros
+
+esta es la forma con un ejemplo basico de como SE inyecta dependencias
+-> despues hay chiches como agregar constructores, pero en una misma clase y de ahi llevarlo a la clase CLIENTE
+
+bueno, esto en SPRINGBOOT cambia un poco, debido a que existen ANOTACIONES que hace que no tengas que andar
+-> instanciando a las clases para poder USARLA en la CLASE CLIENTE
+
+
+// SpringBootApp.java
+@SpringBootApplication
+@ComponentScan("com.tu.paquete") // aclaro donde tiene que buscar los componenetes , en este caso la clase AppConfig
+public class SpringBootApp {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootApp.class, args);
+    }
+}
+
+
+// AppConfig.java
+@Configuration // esta anotacion sirve para definir que la clase sera  BEANS, osea que sera inyectables
+public class AppConfig {
+
+    @Bean
+    public Mensajero servicioEmail() {
+        return new ServicioEmail();
+    }
+}
+
+// Interfaz y implementación (igual que antes)
+class ServicioEmail implements Mensajero {
+    @Override
+    public void enviarMensaje(String mensaje) {
+        System.out.println("Mensaje enviado por correo electrónico: " + mensaje);
+    }
+}
+// Cliente (simplificado)
+@Component
+public class Cliente {
+    private final Mensajero mensajero;
+
+    @Autowired // para inyeccion de dependencias que esta en otra clase
+    public Cliente(Mensajero mensajero) {
+        this.mensajero = mensajero;
+    }
+
+    public void enviarMensaje(String mensaje) {
+        mensajero.enviarMensaje(mensaje);
+    }
+}
+
+------------------ ESTO ES BASICAMENTE UNA INYECCION DE DPENENDECIAS NORMAL VS SPRINGBOOT ----------------
+
+ahora se vera: como funciona SPRINGBOOT con las INYECCIONES DE DEPENDENCIAS pero CON variables de entorno
+
+- que es un BEANS?
+El patrón Singleton se utiliza para asegurar que una clase tenga SOLO UNA instancia y
+proporcione un punto de acceso global a esta instancia. como por ejemplo:
+ ---> si requiero tener un BATIMOVIL, solo instancio con un SINGLENTON Y ASEGURO QUE HAYA 1 SOLO BATIMOVIL
+.Sin embargo, en Spring Boot,esto se maneja automáticamente mediante la configuración de los beans.
+El contenedor de Spring garantiza que haya una única instancia del bean a menosque se especifique lo contrario.
+
+--> en la imagen INYECCIONES-SPRINGBOOT.JPG -- por si no se entiende, es un diagrama
+en la que se muestra como es un "generador" o un template de SINGLENTON
+que sirve para que mediante otras clases, la puedan usar y crear sus propias UNICAS instancias DE CLASES
+class SinglentonCreate {
+attribute
+method getInstance()}
+
+class serviceOne {
+attribute singlenton: SinglentonCreate
+method one()}
+
+class serviceTwo {
+attribute singlenton2: SinglentonCreate
+method two()}
+etc etc
+
+------
+Con los beans de Spring, podemos inyectar un objeto en el contenedor de Spring a través de metadatos mediante
+inversión de control (IoC). En efecto, un objeto puede definir sus dependencias sin crearlas y delegar
+ese trabajo al contenedor de IoC .
+El alcance de un bean define su ciclo de vida y visibilidad.
+
+¿Cuándo usar @Bean?
+Componentes compartidos: Si una clase va a ser utilizada por múltiples partes de tu aplicación,
+	un bean garantiza que todos accedan a la misma instancia, evitando problemas de sincronización y
+	mejorando la consistencia de datos.
+Configuración compleja: Cuando una clase requiere una configuración inicial compleja, un bean te permite
+ 	centralizar esta configuración y asegurarte de que se realice correctamente cada vez que se crea una
+ 	instancia.
+Ciclo de vida gestionado: Si necesitas controlar el ciclo de vida de un objeto (por ejemplo, inicializarlo
+ de una manera particular o destruirlo cuando la aplicación se cierra), un bean te proporciona esta
+  funcionalidad.
+Inyección de dependencias: Los beans son la base de la inyección de dependencias en Spring,
+ lo que facilita la creación de aplicaciones modulares y testables.
+
+¿Cuándo no usar @Bean?
+Clases locales: Si una clase solo es utilizada dentro de un método o clase,
+ 	no es necesario crear un bean.
+Clases anotadas con @Component, @Service, @Repository o @Controller:
+	Estas anotaciones ya indican a Spring que la clase debe ser considerada un bean.
+Clases que no necesitan ser inyectadas en otros componentes:
+	Si una clase no es una dependencia de otras clases, no es necesario crear un bean.
+------------------
+Preguntas clave sobre el uso de @Bean:
+¿Es este objeto un componente compartido?
+
+¿Será utilizado por múltiples partes de mi aplicación?
+¿Necesito garantizar que todas las partes utilicen la misma instancia?
+¿Requiere este objeto una configuración compleja?
+
+¿Necesita ser inicializado con parámetros específicos o recursos externos?
+¿La configuración es susceptible de cambiar en el futuro?
+¿Tiene este objeto un ciclo de vida específico?
+
+¿Necesita ser inicializado de una manera particular?
+¿Debe ser destruido de forma especial cuando ya no se utilice?
+¿Quiero controlar el alcance de este objeto?
+
+¿Necesito que sea un singleton (una sola instancia), un prototipo (una nueva instancia cada vez que se solicita) o tener otro alcance?
+¿Necesito inyectar dependencias en este objeto?
+
+¿Depende este objeto de otros servicios o componentes?
+¿Este objeto es parte de la infraestructura de mi aplicación?
+
+¿Proporciona servicios básicos como acceso a la base de datos, caché, etc.?
+
+
+Escenarios comunes donde es apropiado usar @Bean:
+Componentes de infraestructura: Fuentes de datos, gestores de transacciones, clientes HTTP, etc.
+Servicios compartidos: Servicios que son utilizados por múltiples componentes de la aplicación (por ejemplo, un servicio de autenticación).
+Objetos con configuración compleja: Objetos que requieren una configuración inicial extensa.
+Objetos con un ciclo de vida específico: Objetos que necesitan ser inicializados o destruidos de una manera particular.
+Escenarios donde no es necesario usar @Bean:
+Objetos locales: Objetos que solo se utilizan dentro de un método o clase.
+Objetos de corta duración: Objetos que se crean y destruyen rápidamente.
+Objetos que no necesitan ser inyectados: Objetos que no son dependencias de otros componentes.
+
+
+Ejemplo para reflexionar:
+Imagina que tienes una clase EmailService que se encarga de enviar correos electrónicos. ¿Deberías crear un bean para esta clase?
+
+Si la configuración del servidor de correo electrónico es compleja y puede cambiar, un bean te permite centralizar esta configuración.
+Si el servicio de correo electrónico es utilizado por múltiples componentes de tu aplicación, un bean garantiza que todos utilicen la misma instancia.
+Si necesitas controlar el ciclo de vida del servicio (por ejemplo, inicializarlo cuando la aplicación se inicia y cerrarlo cuando se detiene), un bean es adecuado.
+
+DATAZO: PARA EL USO DE VARIOS BEANS
+--> DEBIDO A QUE BEAN es como la INSTANCIACION de objetos (en MI CASO y en este proyecto por ejemplo se usa EN LOS SERVICIOS como WHEATER y TRANSLATOR)
+--> ESTA INSTANCIACION CORRE POR SPRINGBOOT ya que este luego lo gestionara.
+--> CUANDO NECESITAS INSTANCAIR VARIOS OBJETOS, CON SU @CONFIGURATION (y en RETROFIT)
+-----> lo mejor que podes hacer es agregar un nombre a cada BEAN para que spring pueda laburar y no se confunda
+-----> ademas de que en su constructor (en MI CASO, de retrofit de WHEATER.SERVICE y TRANSLATOR.SERVICE)
+-----> se debe agregar en su parametro un: @Qualifier("nombre_del_bean")
+
+
+
+---------------
+que es un AUTOWIRED?
+es una anotacion tambien de spring, en la que me sirve ahorrar codigo para cuuando requiero usar
+un metodo o metodos de una clase, en vez de instanciar toda la clase de nuevo, con usar autowired
+spring entiende que la clase debe instancairse para cuando se use ese atributo
+
+ejemplo:
+@Configuration
+public class AppConfig {
+@Bean
+public MiServicio miServicio() {
+return new MiServicioImpl();
+
+}
+}
+
+@Service
+public class MiServicioCliente {
+private final MiServicio miServicio;
+
+@Autowired
+public MiServicioCliente(MiServicio miServicio) {
+ this.miServicio = miServicio; }
+ // Uso de miServicio en métodos...
+}
+}
+* a diferencia de Bean, que lo que HACE BEAN es instanciar el metodo, o metodos como objeto nuevo
+* autowired LO QUE HACE es traer ese objeto o instanciacion que hubo en otra clase y PRECARGARLO para usar donde se lo requiera
+* NO ES NECESARIO QUE TRABAJE SIEMPRE CON SPRING
+
+* si agrego AUTOWIRED, spring entiende que debe tratar como un BEAN
+
+-----------------------------------------------------
+La anotación @Bean se utiliza en métodos dentro de una clase configurada con @Configuration
+para definir y gestionar beans dentro del contenedor de Spring.
+Piensa en ella como una fábrica de objetos donde cada método crea y devuelve una instancia de un bean.
+
+-> es como decir que sirve solo para metodos -> por lo general para alguna configuracion preseteada que quiero
+que spring lo maneje y lo pueda usar en otras clases
+por ejemplo
+
+
+Característica	->            @Bean (dentro de @Configuration)	        @Autowired
+Propósito	    ->            Crear y configurar un objeto	         Inyectar un objeto ya creado
+¿Dónde se usa?	->            En clases @Configuration	             En @Service, @Component, @Controller
+¿Cómo funciona? ->        	Devuelve un objeto específico            Pide a Spring un objeto ya registrado
+                            que Spring guardará como bean
+Ejemplo típico	->            @Bean public Retrofit retrofit() {...}	 @Autowired private Retrofit retrofit;
+
+
+xipvxuyiewaskonj

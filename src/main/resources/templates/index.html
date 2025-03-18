@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <title>index</title>
+</head>
+<body>
+    <header>
+        <div class="logo-sanwich">
+            <img src="https://img.freepik.com/vector-premium/vector-diseno-logotipo-sandwich-simple_1594-256.jpg" alt="Logo Empresa">
+        </div>
+        <div class="user" th:if="${#authentication.principal != null}">
+            <p th:text="${#authentication.name}">Nombre Usuario</p>
+        </div>
+        <div class="barra-clima">
+            <div class="data-city">
+                <p>Nombre Ciudad <span th:text="${ciudad}"></span> </p>
+                <p>Descripcion: <span th:text="${descripcion}"></span> </p>
+                <p>Temperatura Actual: <span th:text="${temperaturaActual}"></span> °C Sensación Térmica: <span th:text="${sensacionTermica}"></span> °C</p>
+                <p>Temperatura Mínima: <span th:text="${temperaturaMinima}"></span> °C Temperatura Máxima: <span th:text="${temperaturaMaxima}"></span> °C</p>
+                <p>Viento: <span th:text="${viento}"> </span> km/h </p>
+                <p><span th:text="${icono}"></span></p>
+            </div>
+        </div>
+        <div class="carrito-item" th:if="${#authentication.principal != null}">
+            <label>Cantidad:</label>
+            <img width="30" height="30" src="https://img.icons8.com/ios/50/shopping-cart--v1.png" alt="shopping-cart--v1"/>
+        </div>
+        <div class="logout" th:if="${#authentication.principal != null}">
+            <label>Cerrar Sesión</label>
+            <img width="30" height="30" src="https://img.icons8.com/fluency-systems-filled/50/exit.png" alt="exit"/>
+        </div>
+    </header>
+    <main>
+        <div class="armar-pedido">
+            <a href="/armar-pedidos" class="button-pedido"> Armar Pedido</a>
+
+        </div>
+        <div class="ver-pedido">
+            <a href="/ver-pedidos" class="button-ver-pedido"> Ver Pedido</a>
+        </div>
+        <div class="barra-productos">
+            <img src="https://scontent.feze10-1.fna.fbcdn.net/v/t39.30808-6/465146787_8756319044424492_2929219768987064539_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=cf85f3&_nc_ohc=UO_68tS1oZMQ7kNvgGvbUpl&_nc_zt=23&_nc_ht=scontent.feze10-1.fna&_nc_gid=ARCsW9-78rrloc5_Jxc8sAS&oh=00_AYBPYF-rxkpo6274Fa44tGcvdZ6sRvzj_ElnLb4nLLcGLg&oe=6731B350" alt="sanwichemiga">
+            <img src="https://www.nanette.com.ar/wp-content/uploads/2020/06/torta-ok.png" alt="torta">
+            <img src="https://www.nanette.com.ar/wp-content/uploads/2020/07/Alfajor-de-chocolate-1.jpg" alt="alfajores chocolate">
+            <img src="https://www.nanette.com.ar/wp-content/uploads/2020/07/bizcochos-1.jpg" alt="bizcochos grasa">
+            <img src="https://recetinas.com/wp-content/uploads/2019/10/tarta-de-dulce-de-leche.jpg" alt="tarta dulce leche">
+            <img src="https://recetinas.com/wp-content/uploads/2018/04/tarta-de-queso-philadelphia.jpg" alt="tarta pie">
+        </div>
+    </main>
+    <footer>
+        <div class="info-footer">
+            <p>Alexander Cl</p>
+            <label>Esto es un proyecto desde 0 realizado con Java SpringBoot
+                en la que se realizo un sistema de ventas de una Sanwicheria
+                en ella podra:
+                <br>*Pedir pedidos,
+                <br>*Ver los pedidos,
+                <br>*Darse de alta al sistema
+                <br> El pedido de Alta se implemento un codigo token para habilitar al usuario al ingreso del sitio
+            </label>
+        </div>
+
+    </footer>
+</body>
+
+</html>

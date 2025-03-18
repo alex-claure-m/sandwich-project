@@ -1,0 +1,10 @@
+esta api, sacado de la galera (uno lo subio y retoco debido a que vio como usaba una extension)
+no esta hecho para el mapeo en json tradicional como en las demas clases
+aca hay array de array, entonces solamente lo que debo hacer es una clase de poder extraer el array
+y una interface para poder usarla
+
+URL: https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=auto&tl=en&q=bonjour
+-> tal como dice arriba
+devuelve un array de arrays!
+
+https://github.com/ssut/py-googletrans/issues/268

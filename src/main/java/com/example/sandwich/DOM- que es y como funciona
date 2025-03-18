@@ -1,0 +1,5 @@
+DOM -> interfaz de preogramacion que representa la estructura de un documento html/xml como ARBOL DE NODOS
+   que hace en si? -> hace que los browsers tomen la pagina y sus elementos como formato manipulable para js
+   lo levanta a memoria para que js lo pueda manipular
+   basicamente es lo que lo vuelve DINAMICO al HTML
+

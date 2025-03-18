@@ -1,0 +1,76 @@
+// por que siempre me olvido como va esto
+* cuando requiero crear entidades que esten acorde a las clases del domain
+* tengo que tener en cuenta el tipo de relacion que van a tener entre clases
+-> suponete que tenes 2 clases que se relacionan mediante un atributo que es otra clase
+--> public class Libro{
+		int id;
+		Autor autor;// puede existir libros que tenga 1 o mas autores -> pero decido que para este ejemplo sea 1 solo autor
+		}
+	public class Autor{
+		int id;
+		string nombre;
+		List<Libro> libros; // cuantos libros escribio ese autor
+	}
+-> bueno, entonces se sabe que un libro tiene un autor y que los autores puede tener muchos libros
+-> y esto te esta diciendo algo que las relaciones es @oneToMany y @ManyToOne
+-> por que UN AUTOR PUEDE TNER MUCHOS LIBROS, pero un libro le corresponde a UN AUTOR
+-> podria haber sido MANYTOMANY a MANYTOMANY -> pero para entrar a esto es mas bardo - despues lo explayo
+
+* existe tambien el ONE TO ONE - despues de este ejemplo se buscara un ejemplo
+
+y como deberia ir las anotaciones para cada calse?
+--> teniendo el ejemplo de las clases --
+--> public class Libro{
+		int id;
+		@ManyToOne -> con esta anotacion digo que HAY muchos libros a los cuales responde a este AUTOR (atributo)
+		// otra forma de verlo es: si la clase que esta relacionada tiene un atributo de lista, entonces la otra clase empieza con Many--
+		// se le debe aclarar el tema de a que atributo de la entidad que debe relacionar
+		@JoinColumn(name ="autor_id") // el autor_id , es por defecto la creacion de la clase AUTOR cuando le declaras como ENTIDAD
+		Autor autor;// puede existir libros que tenga 1 o mas autores -> pero decido que para este ejemplo sea 1 solo autor
+		}
+	public class Autor{
+		int id;
+		string nombre;
+		@oneToMany // es para decir que la clase AUTOR , tiene MUCHOS libros
+		// ES LA CONTRA PARTE DE la anotacion que esta en la clase LIBRO
+		// pero a su vez , se pude agregar un mappedby en esta clase , opcional
+		// para delimitar a que ATRIBUTO de la CLASE Libro quiere hacer REFERENCIA
+		@onetomany (mappedby="autor")
+		List<Libro> libros; // cuantos libros escribio ese autor
+	}
+
+-> existen otros parametros que se le puede agregar como el FETCH_LAZY O EAGER
+que se encarga en como se deben cargar las entidades
+-> la lazy se refiere que es la perezosa en la que solo se carga las entidades cuando se accede por primera vez
+-> basicamente otra forma de verlo es cuando uno requiere hacer una busqueda. al primero que encuentra con este tipo
+-> es al primero que trae
+
+-> el EAGER se refiere mas  cuando las entidades relacionada se cargan apenas se cargue la entidad principal
+-> es como decir que LOS libros es cargan al mismo tiempo que los autores, y es medio ineficiente en ocaciones
+
+-> MANY TO MANY
+-> cuando se tiene que hacer una relacion de muchos a muchos, hay que agregar algunos parametros
+-> pero no solo eso, si vez el ejemplo base, que aclare que depende de como se encare unos libros pueden tener muchos autores
+-> iremos por este formato
+-> una cosa a demas , es el agregado de JOINtable cuando hay mucohs a muchos
+
+public class Autor {
+    private String nombre;
+    @ManyToMany
+    @JoinTable(
+        name = "autores_libros", //defino el nombre de la columna de la entidad AUTOR donde iran los joineados
+        joinColumns = @JoinColumn(name = "autor_id"), // defino con que columna se van a joinear de la entidad
+        inverseJoinColumns = @JoinColumn(name = "libro_id") // defino que la columna libro_id (de la clase LIBRO) es la PK
+    )
+    private Set<Libro> libros = new HashSet<>();
+}
+
+public class Libro {
+
+    private String titulo;
+
+    @ManyToMany(mappedBy = "libros") // el mappedby ers para decir que autores mapea con el atributo libros de la clase LIBRO
+    private Set<Autor> autores = new HashSet<>();
+}
+
+
